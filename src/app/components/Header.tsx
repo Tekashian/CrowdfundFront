@@ -1,76 +1,88 @@
 // src/components/Header.tsx
-'use client'; // Komponent nadal musi być kliencki
+'use client';
 
-import React, { useState, useEffect } from 'react'; // Importujemy hooki useState i useEffect
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ConnectButton } from './ConnectButton';
+import { ConnectButton } from './ConnectButton'; // Zakładamy, że ten komponent istnieje
+
+// Ikony SVG (bez zmian)
+const SunIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-6.364-.386 1.591-1.591M3 12h2.25m.386-6.364 1.591 1.591M12 12a2.25 2.25 0 0 0-2.25 2.25 2.25 2.25 0 0 0 2.25 2.25 2.25 2.25 0 0 0 2.25-2.25A2.25 2.25 0 0 0 12 12Z" /></svg> );
+const MoonIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg> );
+const LanguageIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg> );
+
 
 export function Header() {
-  // --- Logika do śledzenia przewijania ---
-  const [isScrolled, setIsScrolled] = useState(false); // Stan: czy strona jest przewinięta?
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Funkcja, która będzie sprawdzać pozycję przewinięcia
-    const handleScroll = () => {
-      // Jeśli przewinięto więcej niż 10 pikseli od góry, ustawiamy isScrolled na true
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        // W przeciwnym razie ustawiamy na false
-        setIsScrolled(false);
-      }
-    };
-
-    // Dodajemy "nasłuchiwacz" na zdarzenie przewijania strony
+    const handleScroll = () => { setIsScrolled(window.scrollY > 10); };
     window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    // Ważne: Sprzątamy po sobie, gdy komponent przestaje być widoczny
-    // Usuwamy "nasłuchiwacz", aby nie działał niepotrzebnie w tle
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []); // Pusta tablica zależności oznacza, że ten efekt uruchomi się tylko raz, po załadowaniu komponentu
-  // --- Koniec logiki przewijania ---
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    console.log("Przełączanie motywu - TODO");
+  };
+
+  const toggleLanguage = () => {
+    console.log("Przełączanie języka - TODO");
+  };
+
 
   return (
-    // --- Zmiany w tagu <header> ---
     <header
       className={`
         sticky top-0 z-50 transition-all duration-300 ease-in-out
-        ${isScrolled ? 'bg-white/90 shadow-lg backdrop-blur-sm' : 'bg-white shadow-md'}
+        ${isScrolled ? 'bg-gray-50/75 shadow-lg backdrop-blur-sm' : 'bg-black-50 shadow-md'}
       `}
-      // Klasy:
-      // sticky top-0 z-50: Przykleja nagłówek do góry ekranu i nadaje mu wysoki priorytet (z-index)
-      // transition-all duration-300 ease-in-out: Dodaje płynne przejście dla zmian wyglądu
-      // ${isScrolled ? ... : ...}: Warunkowe dodawanie klas:
-      //   - Jeśli isScrolled jest true (przewinięto):
-      //     - bg-white/90: Białe tło z lekką przezroczystością (90%)
-      //     - shadow-lg: Mocniejszy cień
-      //     - backdrop-blur-sm: Lekkie rozmycie tła pod nagłówkiem (efekt "oszronionej szyby")
-      //   - Jeśli isScrolled jest false (na górze strony):
-      //     - bg-white: Pełne białe tło
-      //     - shadow-md: Standardowy, lekki cień
     >
-      {/* Reszta kodu nawigacji pozostaje taka sama */}
-      <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
-        {/* Sekcja Lewa: Logo */}
+      {/* ZMIANA: Usunięto justify-between, dodano gap dla odstępu */}
+      <nav className="container mx-auto px-4 sm:px-6 py-3 flex items-center gap-8"> {/* ZMIANA */}
+
+        {/* Sekcja Lewa: Logo (bez zmian) */}
         <div>
           <Link href="/" className="text-xl font-bold text-blue-600 hover:text-blue-800">
             CrowdPlatform
           </Link>
         </div>
 
-        {/* Sekcja Środkowa: Menu Nawigacyjne */}
-        <div className="hidden md:flex space-x-6">
-          <Link href="/" className="text-gray-700 hover:text-blue-600">
-            Przeglądaj Kampanie
+        {/* Sekcja Środkowa: Menu Nawigacyjne (bez zmian wewnątrz, ale pozycja się zmieni) */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link href="/zbiorki" className="text-gray-700 hover:text-blue-600 font-medium">
+            Zbiórki
           </Link>
-          {/* <Link href="/create" className="text-gray-700 hover:text-blue-600">Stwórz Kampanię</Link> */}
-          {/* <Link href="/how-it-works" className="text-gray-700 hover:text-blue-600">Jak to działa?</Link> */}
+          <Link href="/kampanie" className="text-gray-700 hover:text-blue-600 font-medium">
+            Kampanie
+          </Link>
+          <Link href="/startupy" className="text-gray-700 hover:text-blue-600 font-medium">
+            Startupy
+          </Link>
         </div>
 
-        {/* Sekcja Prawa: Przycisk Portfela */}
-        <div>
+        {/* Sekcja Prawa: Akcje Użytkownika */}
+        {/* ZMIANA: Dodano ml-auto, aby przesunąć całą sekcję w prawo */}
+        <div className="flex items-center space-x-3 sm:space-x-4 ml-auto"> {/* ZMIANA */}
+          {/* Przełącznik Motywu */}
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-full text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            aria-label="Przełącz motyw"
+          >
+            {isDarkMode ? <SunIcon /> : <MoonIcon />}
+          </button>
+
+          {/* Przełącznik Języka */}
+           <button
+            onClick={toggleLanguage}
+            className="p-1.5 rounded-full text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            aria-label="Zmień język"
+          >
+             <LanguageIcon />
+           </button>
+
+          {/* Przycisk Portfela */}
           <ConnectButton />
         </div>
       </nav>

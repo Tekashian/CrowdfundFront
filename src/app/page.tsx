@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client';
 
-import CampaignCard from './components/CampaingCard'; // Importujemy nasz komponent karty
+import CampaignCard from './components/CampaingCard'; // Upewnij się, że nazwa pliku jest poprawna
 import React, { useState } from 'react'; // Importujemy useState
 
 // --- Funkcja do generowania przykładowych danych ---
@@ -35,17 +35,19 @@ const allSampleCampaigns = generateSampleCampaigns(30);
 // --- Koniec Generowania ---
 
 // --- Wybieramy kampanie do sekcji "Zbiórki Dnia" ---
-const dailyPicks = allSampleCampaigns.slice(0, 2);
+const dailyPicks = allSampleCampaigns.slice(0, 3);
 // --- Koniec Wybierania ---
 
 // --- Stała określająca, ile kampanii ładować za każdym razem ---
 const CAMPAIGNS_PER_LOAD = 20;
 // --- Stała określająca, ile kampanii wyświetlić na początku ---
-const INITIAL_CAMPAIGN_COUNT = 9;
+// ZMIANA: Zamiast 9, ustawiamy 12
+const INITIAL_CAMPAIGN_COUNT = 12;
 
 
 export default function Home() {
   // --- Stan przechowujący liczbę aktualnie widocznych kampanii ---
+  // Teraz zaczynamy od wartości 12
   const [visibleCount, setVisibleCount] = useState(INITIAL_CAMPAIGN_COUNT);
   // --- Koniec Stanu ---
 
@@ -61,16 +63,12 @@ export default function Home() {
 
   return (
     <>
-      {/* ===== Sekcja "Stwórz Kampanię" Z POPRAWIONĄ ŚCIEŻKĄ TŁA ===== */}
+      {/* Sekcja "Stwórz Kampanię" */}
       <div
         className="relative text-center mb-12 rounded-lg shadow-sm overflow-hidden py-20 px-6 bg-cover bg-center"
-        // POPRAWIONA ŚCIEŻKA OBRAZKA TŁA - używamy ścieżki względnej od folderu public
         style={{ backgroundImage: "url('/images/campaign1920.png')" }}
       >
-        {/* Overlay dla lepszej czytelności tekstu */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-
-        {/* Kontener na treść, ustawiony nad overlayem */}
         <div className="relative z-10">
           <h1 className="text-4xl font-bold mb-4 text-white drop-shadow-md">Masz Pomysł? Potrzebujesz Wsparcia?</h1>
           <p className="text-lg text-gray-200 mb-6 max-w-2xl mx-auto drop-shadow-sm">
@@ -83,13 +81,11 @@ export default function Home() {
           </button>
         </div>
       </div>
-      {/* ===== KONIEC SEKCJI "Stwórz Kampanię" ===== */}
 
-
-      {/* Sekcja "Zbiórki Dnia" (bez zmian) */}
+      {/* Sekcja "Zbiórki Dnia" */}
       <div className="mb-16">
         <h2 className="text-3xl font-bold text-center mb-8 text-blue-700">Zbiórki Dnia</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {dailyPicks.map((campaign) => (
             <CampaignCard
               key={`daily-${campaign.id}`}
@@ -107,7 +103,8 @@ export default function Home() {
 
       {/* Siatka (Grid) ze WSZYSTKIMI Kampaniami */}
       <h2 className="text-3xl font-bold text-center mb-8 text-blue-700">Wszystkie Kampanie</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Mapujemy tylko WIDOCZNĄ część kampanii (teraz zaczynając od 12) */}
         {allSampleCampaigns.slice(0, visibleCount).map((campaign) => (
           <CampaignCard
             key={campaign.id}
@@ -122,7 +119,7 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Przycisk "Rozwiń Więcej" (bez zmian) */}
+      {/* Przycisk "Rozwiń Więcej" */}
       {hasMoreCampaigns && (
         <div className="text-center mt-12 mb-8">
           <button
