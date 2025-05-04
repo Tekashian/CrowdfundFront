@@ -4,14 +4,32 @@
 import React from 'react';
 import Image from 'next/image';
 
+// Style dla karty
+const cardBg = 'bg-white';
+const cardTextColor = 'text-gray-700';
+const cardTitleColor = 'text-gray-900';
+// ZMIANA: Definicja cienia - mocniejszy i fioletowy na hover
+const cardShadowBase = 'shadow-lg'; 
+// Użyjemy fioletu 400 z 60% przezroczystości - dostosuj odcień/przezroczystość wg potrzeb
+const cardShadowHover = 'hover:shadow-2xl hover:shadow-purple-400/60'; 
+const cardBorderRadius = 'rounded-xl'; 
+const imageBorderRadius = 'rounded-t-xl'; 
+const progressBarFill = 'bg-blue-600'; 
+const progressBarBg = 'bg-gray-200'; 
+
+// Style dla fioletowego przycisku "Donate" (przeniesione z poprzedniej odpowiedzi)
+const buttonBaseStyle = "px-5 py-2 rounded-lg font-semibold transition-all duration-150 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2"; 
+const donateButtonStyle = `${buttonBaseStyle} bg-[#c5baff] text-white hover:bg-[#b1a5f0] focus:ring-[#c5baff] active:bg-[#a89dd9] active:shadow-inner`; 
+
 interface CampaignCardProps {
   id: number;
   title: string;
   description: string;
   imageUrl: string;
-  targetAmount: string;
-  raisedAmount: string;
-  endDate: string;
+  targetAmount: string; 
+  raisedAmount: string; 
+  endDate: string; 
+  onDonateClick?: (campaignId: number) => void; // Dodajemy prop dla kliknięcia
 }
 
 export function CampaignCard({
@@ -22,45 +40,85 @@ export function CampaignCard({
   targetAmount,
   raisedAmount,
   endDate,
+  onDonateClick, // Odbieramy prop
 }: CampaignCardProps) {
 
-  const progress = (parseFloat(raisedAmount) / parseFloat(targetAmount)) * 100 || 0;
+  const raisedNum = parseFloat(raisedAmount.split(' ')[0]) || 0;
+  const targetNum = parseFloat(targetAmount.split(' ')[0]) || 1; 
+  const progress = targetNum > 0 ? Math.min((raisedNum / targetNum) * 100, 100) : 0; 
+
+  // Obsługa kliknięcia przycisku Donate
+  const handleDonate = (e: React.MouseEvent) => {
+      e.stopPropagation(); 
+      if (onDonateClick) {
+          onDonateClick(id); 
+      } else {
+          console.warn("onDonateClick handler not provided for campaign ID:", id);
+      }
+  };
 
   return (
-    // --- Główny kontener karty ---
-    <div className="group bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105">
-
-      {/* Kontener obrazka - ustawiamy relative i PROPORCJE */}
-      {/* Zamiast stałej wysokości (np. h-64), używamy proporcji */}
-      <div className="relative w-full aspect-[3/4]"> {/* ZMIANA: Usunięto h-64, dodano aspect-[3/4] */}
-        {/* Obrazek */}
+    // Główny kontener karty - DODANO 'group', ZMIENIONO cień hover, dodano transition-all
+    <div 
+        className={`group flex flex-col h-full ${cardBg} ${cardBorderRadius} ${cardShadowBase} ${cardShadowHover} overflow-hidden transition-all duration-300 ease-in-out cursor-pointer`} // Dodano group, transition-all, cursor-pointer
+    >
+      {/* Kontener obrazka - proporcje 1:1, zaokrąglenie górne, overflow-hidden */}
+      <div className={`relative w-full aspect-square ${imageBorderRadius} overflow-hidden`}> 
         <Image
-          src={imageUrl || `https://placehold.co/600x400/E2E8F0/A0AEC0?text=Kampania+${id}`}
+          src={imageUrl || `https://placehold.co/600x600/E5E7EB/9CA3AF?text=Kamp.+${id}`} // Placeholder 1:1
           alt={`Obrazek kampanii ${title}`}
-          fill // Zmieniono layout="fill" na fill={true} dla nowszych wersji Next.js/Image
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" // Pomaga Next.js wybrać optymalny rozmiar obrazka
-          style={{ objectFit: 'cover' }} // Zastępuje objectFit klasą style
-          className="transition-all duration-300 ease-in-out group-hover:blur-sm group-hover:brightness-50"
+          fill 
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" 
+          style={{ objectFit: 'cover' }}
+          // DODANO: Efekt rozmycia i transition na obrazku przy najechaniu na KARTĘ (group-hover)
+          className="transition-all duration-300 ease-in-out group-hover:blur-sm" // Użyto blur-sm
         />
 
-        {/* Nakładka (Overlay) z informacjami */}
-        <div className="absolute inset-0 bg-black bg-opacity-60 p-4 flex flex-col justify-end text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out cursor-pointer">
-          <h3 className="text-lg font-semibold mb-1 truncate">{title}</h3>
-          <p className="text-xs mb-2 line-clamp-2">{description}</p>
-          <div className="w-full bg-gray-600 rounded-full h-1.5 mb-1">
-            <div
-              className="bg-green-500 h-1.5 rounded-full"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between text-xs mb-1">
-            <span>Zebrano: {raisedAmount}</span>
-            <span>Cel: {targetAmount}</span>
-          </div>
-          <div className="text-xs">Koniec: {endDate}</div>
+        {/* NOWOŚĆ: Nakładka (Overlay) pojawiająca się na hover */}
+        <div 
+            className={`absolute inset-0 flex items-center justify-center 
+                       bg-black/40 backdrop-blur-[1px]  
+                       opacity-0 group-hover:opacity-100 
+                       transition-opacity duration-300 ease-in-out 
+                       rounded-t-xl`} // Dopasowujemy zaokrąglenie do obrazka
+        >
+            {/* Fioletowy Przycisk Donate */}
+            <button 
+                onClick={handleDonate}
+                // Dodano animację skalowania dla przycisku
+                className={`${donateButtonStyle} transform scale-90 group-hover:scale-100 transition-transform duration-200 ease-in-out`}
+            >
+                Wesprzyj
+            </button>
         </div>
+        {/* Koniec Nakładki */}
+
+        {/* Element maskujący tworzący łuk (pozostaje bez zmian, tworzy wypukły łuk) */}
+        <div 
+            className={`absolute bottom-0 left-0 right-0 h-6 ${cardBg} rounded-t-full -mb-1`} 
+        ></div>
+      </div> {/* Koniec kontenera obrazka */}
+
+      {/* Sekcja z tekstem - Padding p-8 (bez zmian) */}
+      <div className={`p-8 flex flex-col flex-grow ${cardTextColor}`}> 
+        <h3 className={`text-lg font-semibold mb-2 truncate ${cardTitleColor}`}>{title}</h3>
+        <p className="text-sm mb-4 line-clamp-3 opacity-90 flex-grow">{description}</p> 
+        
+        {/* Pasek Postępu (bez zmian) */}
+        <div className={`w-full ${progressBarBg} rounded-full h-2 mb-2.5 overflow-hidden`}> 
+          <div
+            className={`${progressBarFill} h-2 rounded-full transition-all duration-500 ease-out`} 
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+
+        {/* Statystyki (bez zmian) */}
+        <div className="flex justify-between text-xs font-medium mb-1.5 opacity-90"> 
+          <span>Zebrano: {raisedAmount} ETH</span> 
+          <span>Cel: {targetAmount} ETH</span> 
+        </div>
+        <div className="text-xs opacity-70">Koniec: {endDate}</div> 
       </div>
-      {/* Usunęliśmy dolną sekcję z tekstem */}
     </div>
   );
 }
