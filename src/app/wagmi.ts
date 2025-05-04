@@ -4,35 +4,39 @@ import { defaultWagmiConfig } from '@web3modal/wagmi/react'
 import { type Chain, sepolia, bscTestnet } from 'wagmi/chains'
 
 // 1. Twój Project ID z WalletConnect Cloud
-// USUWAMY 'export' stąd
 const projectId = '11e6272e1d9a80a2801aa4cfae0c1948';
 if (!projectId) throw new Error('WalletConnect Project ID is required');
 
 // 2. Definiujemy metadane dla Twojej aplikacji (widoczne w modalu WalletConnect)
 const metadata = {
-  name: 'Crowdfunding Platform', // Zmień na nazwę Twojej aplikacji
-  description: 'Zdecentralizowana Platforma Crowdfundingowa', // Zmień na opis
-  url: 'https://twoja-domena.com', // WAŻNE: Zmień na adres URL Twojej przyszłej strony
-  icons: ['https://avatars.githubusercontent.com/u/37784886'] // WAŻNE: Zmień na URL do ikony Twojej aplikacji
+  name: 'Crowdfunding Platform', 
+  description: 'Zdecentralizowana Platforma Crowdfundingowa', 
+  url: 'https://twoja-domena.com', // Zmień!
+  icons: ['https://avatars.githubusercontent.com/u/37784886'] // Zmień!
 }
 
 // 3. Definiujemy lista sieci, które ma obsługiwać aplikacja
-// USUWAMY 'export' stąd
-const chains: Chain[] = [sepolia, bscTestnet];
-// Możesz dodać więcej sieci w przyszłości, np.:
-// import { mainnet, bsc } from 'wagmi/chains';
-// const chains: Chain[] = [mainnet, bsc, sepolia, bscTestnet];
+const chains: Chain[] = [sepolia, bscTestnet]; 
+
+// --- NOWA SEKCJA: Definicja Adresu Kontraktu ---
+// Definiujemy stałą z adresem kontraktu Crowdfund na sieci Sepolia
+const crowdfundContractAddressSepolia = '0xbCa6057F8a145f2d514E42A26543d467CfA299B1' as const; 
+// 'as const' jest opcjonalne, ale może pomóc TypeScriptowi traktować to jako stałą dosłowną
+
+// Możesz tu dodać adresy dla innych sieci, jeśli planujesz
+// const crowdfundContractAddressBscTestnet = '0xTwojAdresNaBscTestnet'; 
+// ---------------------------------------------
 
 
 // 4. Tworzymy konfigurację wagmi używając funkcji z Web3Modal
-// USUWAMY 'export' stąd, bo eksportujemy na dole
 const config = defaultWagmiConfig({
-  chains: chains, // Przekazujemy jawnie otypowaną tablicę sieci
-  projectId, // Twój Project ID z WalletConnect
-  metadata, // Metadane aplikacji
-  // Opcjonalnie: Możesz wyłączyć niektóre domyślne portfele, np. Coinbase
-  // enableCoinbase: false,
+  chains: chains, 
+  projectId, 
+  metadata, 
 })
 
 // Eksportujemy wszystko razem na końcu pliku
-export { config, projectId, chains }
+// DODAJEMY NOWĄ STAŁĄ DO EKSPORTU
+export { config, projectId, chains, crowdfundContractAddressSepolia } 
+// Jeśli dodasz adres dla BSC, też go tu wyeksportuj:
+// export { config, projectId, chains, crowdfundContractAddressSepolia, crowdfundContractAddressBscTestnet }
