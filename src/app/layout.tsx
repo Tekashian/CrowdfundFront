@@ -1,28 +1,17 @@
 // src/app/layout.tsx
-// Ten komponent POZOSTAJE Server Component (BEZ 'use client')
+// Server Component (BEZ 'use client')
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// UŻYJ TEGO IMPORTU PO INSTALACJI 'geist':
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
-// Importujemy nasz komponent-pośrednik Web3
-import { Web3ProviderClientLoader } from './providers/Web3ProviderClientLoader'; // Upewnij się, że ścieżka jest poprawna
-// Importujemy komponenty Header i Footer
-import Header from './components/Header'; // Upewnij się, że ścieżka jest poprawna
-import Footer from './components/Footer'; // Upewnij się, że ścieżka jest poprawna
+import { Web3ProviderClientLoader } from './providers/Web3ProviderClientLoader'; // Dostosuj ścieżkę!
+import { Header } from './components/Header'; // Dostosuj ścieżkę!
+import Footer from './components/Footer'; // Dostosuj ścieżkę!
 import React from "react";
 
-// Konfiguracja czcionek Geist (bez zmian)
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// Metadane - mogą być tutaj
+// Metadane (bez zmian)
 export const metadata: Metadata = {
   title: "Crowdfunding Platform",
   description: "Zdecentralizowana Platforma Crowdfundingowa",
@@ -34,25 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      {/* Dodajemy klasy flex flex-col min-h-screen dla układu */}
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
-      >
-        {/* Używamy naszego komponentu-pośrednika Web3 */}
+    // Używamy rekomendowanego className z GeistSans
+    <html lang="pl" className={GeistSans.className}>
+      <body className="antialiased flex flex-col min-h-screen bg-gray-50">
         <Web3ProviderClientLoader>
-          {/* Nagłówek na górze */}
           <Header />
-
-          {/* Główna treść strony (children) */}
-          {/* Klasa flex-grow sprawia, że ten element wypełnia dostępną przestrzeń */}
-          <main className="flex-grow container mx-auto px-6 py-4"> {/* Przykładowe style dla treści */}
+          <main className="flex-grow container mx-auto px-4 sm:px-6 py-8 pb-10">
             {children}
           </main>
-
-          {/* DODAJEMY Stopkę TUTAJ, po głównej treści */}
           <Footer />
-
         </Web3ProviderClientLoader>
       </body>
     </html>

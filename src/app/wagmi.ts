@@ -11,7 +11,7 @@ if (!projectId) throw new Error('WalletConnect Project ID is required');
 const metadata = {
   name: 'Crowdfunding Platform', 
   description: 'Zdecentralizowana Platforma Crowdfundingowa', 
-  url: 'https://twoja-domena.com', // Zmień!
+  url: 'http://localhost:3000', // Zmień!
   icons: ['https://avatars.githubusercontent.com/u/37784886'] // Zmień!
 }
 
